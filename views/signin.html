@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+</head>
+<body>
+    <!-- <form action="/signin/check" method="post" > -->
+        <input type="text" placeholder="email" name="email" required id="emailInput">
+        <input type="password" placeholder="password" name="password" required id="passwordInput">
+        <button onclick="check()">Sign In</button>
+</body> 
+<script>
+    window.onload = () => {
+        token = window.localStorage.getItem("token");
+        if(token){
+            var http = new XMLHttpRequest();
+            http.open("POST","/signin/check",true);
+            let data = {
+                "token": token
+            }
+            data = JSON.stringify(data);
+            http.setRequestHeader('Content-type', 'application/json');
+            http.onload =() => {
+                if(http.status == 200){
+                    data = JSON.parse(http.responseText);
+                    // console.log(data.token);
+                    localStorage.setItem('token',data.token);
+                    window.location.href = "/";
+                }
+            }
+            http.send(data);
+        }
+    }
+    function check(){
+        // console.log("xxx");
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("POST","/signin/check",true);
+        var email = document.getElementById("emailInput").value;
+        var password = document.getElementById("passwordInput").value;
+        // var params = `email=${email}&password=${password}`;
+        let data = {
+            "email": email,
+            "password": password 
+        }
+        data = JSON.stringify(data);
+        xmlHttp.setRequestHeader('Content-type', 'application/json');
+        // http.onreadystatechange = function() {//Call a function when the state changes.
+        //     if(http.readyState == 4 && http.status == 200) {
+        //         alert(http.responseText);
+        //     }
+        // }
+        xmlHttp.onload =() => {
+            if(xmlHttp.status == 200){
+                data = JSON.parse(xmlHttp.responseText);
+                // console.log(data.token);
+                localStorage.setItem('token',data.token);
+                window.location.href = "/";
+            }
+            else{
+                alert("error");
+            }
+        }
+        xmlHttp.send(data);
+
+        return false;
+    }
+</script>
+</html>
