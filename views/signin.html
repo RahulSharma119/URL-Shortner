@@ -5,12 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
 <body>
-    <!-- <form action="/signin/check" method="post" > -->
-        <input type="text" placeholder="email" name="email" required id="emailInput">
-        <input type="password" placeholder="password" name="password" required id="passwordInput">
-        <button onclick="check()">Sign In</button>
+    <div class="container">
+        <div class="container d-flex justify-content-between">
+            <h1>URL Shortener</h1>
+            <button class="signoutBtn btn btn-primary" id="signupBtn" onclick="window.location.href = '/signup'">Sign Up</button>
+        </div>
+        <div class="container form-group col">
+            <div class="form-group">
+                <input type="text" placeholder="email" name="email" required id="emailInput" class="form-control col mr-6">
+            </div>
+            <div class="form-group">
+                <input type="password" placeholder="password" name="password" required id="passwordInput"  class="form-control col mr-2">
+            </div>
+            <div class="form-group">
+                <button onclick="check()" class="btn btn-primary">Sign In</button>
+            </div>
+        </div>
+    </div>
 </body> 
 <script>
     window.onload = () => {
@@ -26,7 +41,6 @@
             http.onload =() => {
                 if(http.status == 200){
                     data = JSON.parse(http.responseText);
-                    // console.log(data.token);
                     localStorage.setItem('token',data.token);
                     window.location.href = "/";
                 }
@@ -35,27 +49,19 @@
         }
     }
     function check(){
-        // console.log("xxx");
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.open("POST","/signin/check",true);
         var email = document.getElementById("emailInput").value;
         var password = document.getElementById("passwordInput").value;
-        // var params = `email=${email}&password=${password}`;
         let data = {
             "email": email,
             "password": password 
         }
         data = JSON.stringify(data);
         xmlHttp.setRequestHeader('Content-type', 'application/json');
-        // http.onreadystatechange = function() {//Call a function when the state changes.
-        //     if(http.readyState == 4 && http.status == 200) {
-        //         alert(http.responseText);
-        //     }
-        // }
         xmlHttp.onload =() => {
             if(xmlHttp.status == 200){
                 data = JSON.parse(xmlHttp.responseText);
-                // console.log(data.token);
                 localStorage.setItem('token',data.token);
                 window.location.href = "/";
             }
