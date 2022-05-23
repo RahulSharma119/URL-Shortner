@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const { requestData, storeUrl } = require("../../Controller/auth");
+const { requestData, storeUrl, deleteShortUrl } = require("../../Controller/auth");
 
 const router = express.Router();
 
@@ -11,6 +11,8 @@ router.get('/',(req,res) => {
 router.post('/getdata',requestData);
 
 router.post('/shortenUrl',storeUrl);
+
+router.post('/deleteShorturl',deleteShortUrl);
 
 
 module.exports = router;
