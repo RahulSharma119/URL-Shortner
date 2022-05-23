@@ -3,8 +3,8 @@ const jwt  =require('jsonwebtoken');
 const shortid = require('shortid');
 const shortUrls = require('../models/shortUrls');
 
+
 exports.signup = (req,res) => {
-    // console.log(req.body);
     User.findOne({ email: req.body.email }).exec(async (error,user) => {
         if(user){
             return res.status(500).json({ message: "User already exists" });
@@ -13,7 +13,6 @@ exports.signup = (req,res) => {
             return res.status(400).json({message: error});
         }
         const { firstName, lastName, email, password } = req.body;
-        // console.log(firstName, lastName,email,password);
         const _user = new User({
             firstName: firstName,
             lastName: lastName,
@@ -34,7 +33,6 @@ exports.signup = (req,res) => {
 
 
 exports.signin = (req,res) => {
-    // console.log(req);
     if(req.body.token){
         const token = req.body.token;
         const user = jwt.verify(token,"jwt_secret_key");
@@ -49,8 +47,8 @@ exports.signin = (req,res) => {
                 });
             }
         })
-        // req.user = user;
     }
+    
     else{
         User.findOne({ email: req.body.email })
         .exec((error,user) => {
@@ -87,23 +85,19 @@ exports.signin = (req,res) => {
 }
 
 exports.requestData = (req,res) => {
-    // console.log(req.body.token);
     if(req.body.token){
         const token = req.body.token;
         const user = jwt.verify(token,"jwt_secret_key");
-        // console.log(user);
         User.findOne({_id:user._id}).select("_id userName").exec(async (error,user) => {
             if(error){
                 return res.status(400).json({"error": error});
             }
             else if(user){
-                // console.log(user);
                 shortUrls.find({ user: {_id: user._id} }).select("_id short full clicks").exec((err,data) => {
                     if(err){
                         return res.status(500).json({"message": "error retriving data"});
                     }
                     else if(data){
-                        // console.log(data);
                         return res.status(200).json(data);
                     }
                 });
@@ -117,7 +111,6 @@ exports.requestData = (req,res) => {
 };
 
 exports.storeUrl = async (req,res) => {
-    // console.log(req.body);
     if(req.body.token){
         const token = req.body.token;
         const user = jwt.verify(token,"jwt_secret_key");
@@ -126,16 +119,6 @@ exports.storeUrl = async (req,res) => {
                 return res.redirect('/signin');
             }
             else if(user){
-                // console.log(user);
-                // shortUrls.create({full : req.body.fullurl, user: {_id: user._id}}).exec((err,data) => {
-                //     if(err){
-                //         return res.status(500).json({"message": "could not shorten url"});
-                //     }
-                //     else if(data){
-                //         console.log(data);
-                //         return res.status(200).json(data);
-                //     }
-                // });
 
                 shortUrls.findOne({ full: req.body.fullurl, user: {_id: user._id} }).select("_id short full clicks").exec((err,data) => {
                     if(err){
@@ -166,7 +149,33 @@ exports.storeUrl = async (req,res) => {
         });
     }
     else{
-        console.log("signin");
         return res.redirect('/signin');
     }
 } 
+
+
+exports.deleteShortUrl = async (req,res) => {
+    if(req.body.token){
+        const token = req.body.token;
+        const short = req.body.shorturl;
+        const user = jwt.verify(token,"jwt_secret_key");
+        User.findOne({_id:user._id}).select("_id userName").exec(async (error,user) => {
+            if(error){
+                return res.status(400).json({"error": "Authentication Failed"});
+            }
+            else if(user){
+                shortUrls.deleteOne({ user: {_id: user._id}, short: short}).exec((err) => {
+                    if(err){
+                        return res.status(500).json({"message": "error deleting data"});
+                    }
+                    else{
+                        return res.status(200).json({"message": "Successfully Deleted data"});
+                    }
+                });
+            }
+        });
+    }
+    else{
+        return res.status(400).json({"error":"Authentication Required"});
+    }
+}
