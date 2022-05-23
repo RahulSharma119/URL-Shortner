@@ -1,45 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
+
 <body>
-        <input type="text" placeholder="First Name" name="firstName" id="fNameInput" required>
-        <input type="text" placeholder="Last Name" name="lastName" id="lNameInput" required>
-        <!-- <input type="text" placeholder="Username" name="username" required> -->
-        <input type="text" placeholder="email" name="email" id="emailInput" required>
-        <input type="password" placeholder="password" name="password" id="passwordInput" required>
-        <button type="button" onclick="submit()">Sign Up</button>
+    <div class="container">
+        <div class="container d-flex justify-content-between">
+            <h1>URL Shortener</h1>
+            <button class="signoutBtn btn btn-primary" id="signInBtn" onclick="window.location.href = '/signin'">Sign
+                In</button>
+        </div>
+        <div class="container">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col">
+                        <input type="text" placeholder="First Name" name="firstName" id="fNameInput" required
+                            class="form-control">
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="Last Name" name="lastName" id="lNameInput" required
+                            class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="email" name="email" id="emailInput" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="password" name="password" id="passwordInput" required
+                        class="form-control">
+                </div>
+                <div class="form-group">
+                    <button type="button" onclick="submit()" class="btn btn-primary">Sign Up</button>
+                </div>
+            </div>
+        </div>
 </body>
 <script>
     window.onload = () => {
         token = window.localStorage.getItem("token");
-        if(token){
+        if (token) {
             var http = new XMLHttpRequest();
-            http.open("POST","/signin/check",true);
+            http.open("POST", "/signin/check", true);
             let data = {
                 "token": token
             }
             data = JSON.stringify(data);
             http.setRequestHeader('Content-type', 'application/json');
-            http.onload =() => {
-                if(http.status == 200){
+            http.onload = () => {
+                if (http.status == 200) {
                     data = JSON.parse(http.responseText);
-                    // console.log(data.token);
-                    localStorage.setItem('token',data.token);
+                    localStorage.setItem('token', data.token);
                     window.location.href = "/";
                 }
             }
             http.send(data);
         }
     }
-    function submit(){
-        // console.log("xxx");
+    function submit() {
         var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("POST","/signup/submit",true);
+        xmlHttp.open("POST", "/signup/submit", true);
         var fname = document.getElementById("fNameInput").value
         var lname = document.getElementById("lNameInput").value
         var email = document.getElementById("emailInput").value;
@@ -49,23 +75,18 @@
             "firstName": fname,
             "lastName": lname,
             "email": email,
-            "password": password 
+            "password": password
         }
         data = JSON.stringify(data);
         xmlHttp.setRequestHeader('Content-type', 'application/json');
-        // http.onreadystatechange = function() {//Call a function when the state changes.
-        //     if(http.readyState == 4 && http.status == 200) {
-        //         alert(http.responseText);
-        //     }
-        // }
-        xmlHttp.onload =() => {
-            if(xmlHttp.status == 200){
+        xmlHttp.onload = () => {
+            if (xmlHttp.status == 200) {
                 data = JSON.parse(xmlHttp.responseText);
-                alert("Successful: ",data.message);
+                alert("Successful: ", data.message);
                 window.location.href = "/signin";
             }
-            else{
-                alert("error: ",xmlHttp.responseText);
+            else {
+                alert("error: ", xmlHttp.responseText);
             }
         }
         xmlHttp.send(data);
@@ -73,4 +94,5 @@
         return false;
     }
 </script>
+
 </html>
